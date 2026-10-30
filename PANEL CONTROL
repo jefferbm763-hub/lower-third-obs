@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lower Third - Panel de Control Remoto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- BARRA SUPERIOR -->
+  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <div class="w-3.5 h-3.5 rounded-full bg-emerald-500 animate-pulse"></div>
+      <h1 class="font-extrabold text-xl text-white tracking-wide flex items-center gap-2">
+        <i class="fa-solid fa-sliders text-emerald-400"></i> OBS Lower Third - Consola de Control
+      </h1>
+    </div>
+
+    <!-- BOTÓN MÁSTER EN AIRE -->
+    <button id="btn-master-toggle" class="px-7 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl transition-all shadow-lg flex items-center gap-2.5 text-sm tracking-wider">
+      <i class="fa-solid fa-broadcast-tower text-base"></i> <span id="master-btn-text">EN AIRE (VISIBLE)</span>
+    </button>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- COLUMNA 1: GESTOR DE PLAYLIST Y TITULARES -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-5 flex flex-col shadow-xl">
+      <h2 class="text-sm font-extrabold uppercase text-emerald-400 tracking-wider flex items-center gap-2">
+        <i class="fa-solid fa-list-check"></i> Gestor de Noticias / Playlist
+      </h2>
+
+      <!-- Agregar Noticia -->
+      <div class="space-y-2">
+        <label class="block text-xs font-bold text-slate-400">Escribir Nuevo Titular</label>
+        <div class="flex gap-2">
+          <textarea id="input-new-headline" rows="2" placeholder="Escribe el titular aquí..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+          <button id="btn-add-headline" class="px-5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition-colors flex flex-col items-center justify-center gap-1">
+            <i class="fa-solid fa-plus text-base"></i>
+            <span>Añadir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de Noticias -->
+      <div class="space-y-2 flex-1 flex flex-col">
+        <div class="flex justify-between items-center">
+          <label class="block text-xs font-bold text-slate-400">Noticias en Cola</label>
+          <span id="playlist-count" class="text-[11px] bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full font-mono">0 noticias</span>
+        </div>
+
+        <div id="playlist-container" class="space-y-2.5 flex-1 overflow-y-auto max-h-[420px] pr-1">
+          <!-- Render dinámico -->
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUMNA 2: NEÓN, TAMAÑOS Y COLORES -->
+    <div class="space-y-6">
+
+      <!-- CONTROL PRECISO DE NEÓN -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+        <h2 class="text-sm font-extrabold uppercase text-emerald-400 tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-bolt"></i> Control Preciso de Neón
+        </h2>
+
+        <!-- Paletas Rápidas -->
+        <div class="grid grid-cols-2 gap-2">
+          <button class="palette-btn p-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-600 text-xs font-medium flex items-center gap-2" data-neon1="#57e33e" data-neon2="#00ffaa" data-badge="#ff3b30" data-bg="#0b1a20">
+            <span class="w-3.5 h-3.5 rounded-full" style="background: linear-gradient(45deg, #57e33e, #00ffaa)"></span> Cyber Verde
+          </button>
+          <button class="palette-btn p-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-600 text-xs font-medium flex items-center gap-2" data-neon1="#00f0ff" data-neon2="#0055ff" data-badge="#ff0055" data-bg="#081026">
+            <span class="w-3.5 h-3.5 rounded-full" style="background: linear-gradient(45deg, #00f0ff, #0055ff)"></span> Azul Eléctrico
+          </button>
+          <button class="palette-btn p-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-600 text-xs font-medium flex items-center gap-2" data-neon1="#ff007f" data-neon2="#9d00ff" data-badge="#00f0ff" data-bg="#1a0826">
+            <span class="w-3.5 h-3.5 rounded-full" style="background: linear-gradient(45deg, #ff007f, #9d00ff)"></span> Magenta Neon
+          </button>
+          <button class="palette-btn p-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-600 text-xs font-medium flex items-center gap-2" data-neon1="#ffaa00" data-neon2="#ff3b30" data-badge="#e60000" data-bg="#1a1208">
+            <span class="w-3.5 h-3.5 rounded-full" style="background: linear-gradient(45deg, #ffaa00, #ff3b30)"></span> Ámbar Fuego
+          </button>
+        </div>
+
+        <!-- Controles Numéricos de Dimensiones -->
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-3">
+          
+          <!-- Grosor (Alto) -->
+          <div>
+            <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+              <span>Grosor (Alto px)</span>
+              <span id="val-height" class="text-emerald-400 font-mono">18px</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="range" id="slider-height" min="1" max="50" value="18" class="w-full accent-emerald-500">
+              <input type="number" id="num-height" min="1" max="50" value="18" class="w-14 bg-slate-900 border border-slate-700 rounded text-center text-xs text-white p-1 font-mono">
+            </div>
+          </div>
+
+          <!-- Ancho -->
+          <div>
+            <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+              <span>Ancho / Extensión Neón</span>
+              <span id="val-width" class="text-emerald-400 font-mono">100%</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="range" id="slider-width" min="10" max="100" value="100" class="w-full accent-emerald-500">
+              <input type="number" id="num-width" min="10" max="100" value="100" class="w-14 bg-slate-900 border border-slate-700 rounded text-center text-xs text-white p-1 font-mono">
+            </div>
+          </div>
+
+          <!-- Arco / Curvatura -->
+          <div>
+            <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+              <span>Curvatura (Arco)</span>
+              <span id="val-arc" class="text-emerald-400 font-mono">20px</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="range" id="slider-arc" min="0" max="60" value="20" class="w-full accent-emerald-500">
+              <input type="number" id="num-arc" min="0" max="60" value="20" class="w-14 bg-slate-900 border border-slate-700 rounded text-center text-xs text-white p-1 font-mono">
+            </div>
+          </div>
+
+          <!-- Glow -->
+          <div>
+            <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+              <span>Resplandor (Glow)</span>
+              <span id="val-glow" class="text-emerald-400 font-mono">12px</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="range" id="slider-glow" min="0" max="80" value="12" class="w-full accent-emerald-500">
+              <input type="number" id="num-glow" min="0" max="80" value="12" class="w-14 bg-slate-900 border border-slate-700 rounded text-center text-xs text-white p-1 font-mono">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Movimientos -->
+        <div class="grid grid-cols-4 gap-1.5">
+          <button class="anim-btn bg-emerald-600 text-white py-2 rounded-lg text-xs font-semibold border border-slate-700 active" data-anim="anim-flow">Flujo</button>
+          <button class="anim-btn bg-slate-800 hover:bg-slate-700 py-2 rounded-lg text-xs font-semibold border border-slate-700" data-anim="anim-pulse">Pulso</button>
+          <button class="anim-btn bg-slate-800 hover:bg-slate-700 py-2 rounded-lg text-xs font-semibold border border-slate-700" data-anim="anim-scan">Láser</button>
+          <button class="anim-btn bg-slate-800 hover:bg-slate-700 py-2 rounded-lg text-xs font-semibold border border-slate-700" data-anim="anim-static">Fijo</button>
+        </div>
+      </div>
+
+      <!-- TIPOGRAFÍA Y COLORES -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+        <h2 class="text-sm font-extrabold uppercase text-amber-400 tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-font"></i> Tipografía y Tamaño
+        </h2>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-1">Fuente Noticiosa</label>
+            <select id="select-font-headline" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white">
+              <option value="'Montserrat', sans-serif" selected>Montserrat</option>
+              <option value="'Oswald', sans-serif">Oswald</option>
+              <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+              <option value="'Anton', sans-serif">Anton</option>
+              <option value="'Inter', sans-serif">Inter</option>
+              <option value="'Roboto', sans-serif">Roboto</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-1">Grosor Letra</label>
+            <select id="select-weight-headline" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white">
+              <option value="600">Semibold (600)</option>
+              <option value="700">Bold (700)</option>
+              <option value="800" selected>ExtraBold (800)</option>
+              <option value="900">Black (900)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+            <span>Tamaño Fuente Titular</span>
+            <span id="val-font-headline" class="text-amber-400 font-mono">42px</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="range" id="slider-font-headline" min="18" max="75" value="42" class="w-full accent-amber-500">
+            <input type="number" id="num-font-headline" min="18" max="75" value="42" class="w-14 bg-slate-950 border border-slate-700 rounded text-center text-xs text-white p-1 font-mono">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    // Canal de comunicación broadcast
+    const channel = new BroadcastChannel('obs_lower_third_channel');
+
+    let state = {
+      isVisible: true,
+      headlineText: "La comunidad de Cravo Totumo comienza a ver avances",
+      neonHeight: 18,
+      neonWidth: 100,
+      neonArc: 20,
+      neonGlow: 12,
+      neonBlur: 0,
+      neon1: "#57e33e",
+      neon2: "#00ffaa",
+      neonAnim: "anim-flow",
+      fontHeadline: "'Montserrat', sans-serif",
+      weightHeadline: "800",
+      sizeHeadline: 42,
+      fontBadge: "'Montserrat', sans-serif",
+      sizeBadge: 24,
+      sizeClock: 26,
+      colorBadge: "#ff3b30",
+      colorBg: "#0b1a20"
+    };
+
+    let currentActiveId = 1;
+    let headlinesList = [
+      { id: 1, text: "La comunidad de Cravo Totumo comienza a ver avances" },
+      { id: 2, text: "Nuevas obras de infraestructura benefician a más de 5,000 familias" }
+    ];
+
+    function broadcast() {
+      channel.postMessage(state);
+      localStorage.setItem('obs_lt_settings', JSON.stringify(state));
+    }
+
+    // Botón Máster
+    const btnMaster = document.getElementById('btn-master-toggle');
+    const masterText = document.getElementById('master-btn-text');
+
+    btnMaster.addEventListener('click', () => {
+      state.isVisible = !state.isVisible;
+      if (state.isVisible) {
+        masterText.textContent = "EN AIRE (VISIBLE)";
+        btnMaster.className = "px-7 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl transition-all shadow-lg flex items-center gap-2.5 text-sm tracking-wider";
+      } else {
+        masterText.textContent = "OCULTO (PANTALLA LIMPIA)";
+        btnMaster.className = "px-7 py-3 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl transition-all shadow-lg flex items-center gap-2.5 text-sm tracking-wider";
+      }
+      broadcast();
+    });
+
+    // Playlist
+    const playlistContainer = document.getElementById('playlist-container');
+    const playlistCount = document.getElementById('playlist-count');
+    const inputNew = document.getElementById('input-new-headline');
+
+    function renderPlaylist() {
+      playlistContainer.innerHTML = '';
+      playlistCount.textContent = `${headlinesList.length} noticias`;
+
+      headlinesList.forEach(item => {
+        const isActive = item.id === currentActiveId;
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-xl border transition-all flex flex-col gap-2 ${
+          isActive 
+            ? 'bg-emerald-950/40 border-emerald-500/80 shadow-lg' 
+            : 'bg-slate-950 border-slate-800 hover:border-slate-700'
+        }`;
+
+        card.innerHTML = `
+          <div class="text-xs font-medium text-slate-200 break-words">${item.text}</div>
+          <div class="flex justify-between items-center pt-1.5 border-t border-slate-800/60">
+            ${
+              isActive 
+                ? `<span class="text-[10px] font-extrabold text-emerald-400 flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> EN AIRE
+                   </span>`
+                : `<button onclick="activateHeadline(${item.id})" class="px-3 py-1 bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-lg text-[11px] font-bold transition-all flex items-center gap-1">
+                    <i class="fa-solid fa-play text-[9px]"></i> PLAY
+                   </button>`
+            }
+            <button onclick="deleteHeadline(${item.id})" class="text-slate-500 hover:text-rose-400 text-xs px-1.5 py-0.5" title="Eliminar">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+        playlistContainer.appendChild(card);
+      });
+    }
+
+    window.activateHeadline = function(id) {
+      const item = headlinesList.find(h => h.id === id);
+      if (item) {
+        currentActiveId = id;
+        state.headlineText = item.text;
+        renderPlaylist();
+        broadcast();
+      }
+    };
+
+    window.deleteHeadline = function(id) {
+      headlinesList = headlinesList.filter(h => h.id !== id);
+      if (currentActiveId === id && headlinesList.length > 0) {
+        activateHeadline(headlinesList[0].id);
+      } else {
+        renderPlaylist();
+      }
+    };
+
+    document.getElementById('btn-add-headline').addEventListener('click', () => {
+      const text = inputNew.value.trim();
+      if (text) {
+        const newId = Date.now();
+        headlinesList.push({ id: newId, text });
+        inputNew.value = '';
+        renderPlaylist();
+      }
+    });
+
+    // Bind Controls
+    function bindControl(sliderId, numId, valLabelId, key) {
+      const slider = document.getElementById(sliderId);
+      const num = document.getElementById(numId);
+      const label = document.getElementById(valLabelId);
+
+      function update(val) {
+        slider.value = val;
+        num.value = val;
+        if (label) label.textContent = val + (key === 'neonWidth' ? '%' : 'px');
+        state[key] = val;
+        broadcast();
+      }
+
+      slider.addEventListener('input', (e) => update(e.target.value));
+      num.addEventListener('input', (e) => update(e.target.value));
+    }
+
+    bindControl('slider-height', 'num-height', 'val-height', 'neonHeight');
+    bindControl('slider-width', 'num-width', 'val-width', 'neonWidth');
+    bindControl('slider-arc', 'num-arc', 'val-arc', 'neonArc');
+    bindControl('slider-glow', 'num-glow', 'val-glow', 'neonGlow');
+    bindControl('slider-font-headline', 'num-font-headline', 'val-font-headline', 'sizeHeadline');
+
+    document.getElementById('select-font-headline').addEventListener('change', (e) => {
+      state.fontHeadline = e.target.value;
+      broadcast();
+    });
+    document.getElementById('select-weight-headline').addEventListener('change', (e) => {
+      state.weightHeadline = e.target.value;
+      broadcast();
+    });
+
+    document.querySelectorAll('.palette-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.neon1 = btn.dataset.neon1;
+        state.neon2 = btn.dataset.neon2;
+        state.colorBadge = btn.dataset.badge;
+        state.colorBg = btn.dataset.bg;
+        broadcast();
+      });
+    });
+
+    document.querySelectorAll('.anim-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.anim-btn').forEach(b => b.className = 'anim-btn bg-slate-800 hover:bg-slate-700 py-2 rounded-lg text-xs font-semibold border border-slate-700');
+        btn.className = 'anim-btn bg-emerald-600 text-white py-2 rounded-lg text-xs font-semibold border border-slate-700 active';
+        state.neonAnim = btn.dataset.anim;
+        broadcast();
+      });
+    });
+
+    renderPlaylist();
+    broadcast();
+  </script>
+</body>
+</html>
