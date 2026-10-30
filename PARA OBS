@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lower Third Overlay OBS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;700;800;900&family=Montserrat:wght@400;700;800;900&family=Oswald:wght@400;700&family=Poppins:wght@400;700;800;900&family=Raleway:wght@400;700;900&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background-color: transparent !important;
+      position: relative;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    @keyframes neonPulse {
+      0%, 100% {
+        opacity: 0.85;
+        filter: blur(var(--neon-blur)) drop-shadow(0 0 var(--neon-glow-1) var(--neon-color-1)) drop-shadow(0 0 calc(var(--neon-glow-1) * 2) var(--neon-color-2));
+      }
+      50% {
+        opacity: 1;
+        filter: blur(var(--neon-blur)) drop-shadow(0 0 calc(var(--neon-glow-1) * 1.6) var(--neon-color-1)) drop-shadow(0 0 calc(var(--neon-glow-1) * 2.5) var(--neon-color-2));
+      }
+    }
+
+    @keyframes neonFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes neonScan {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    :root {
+      --neon-color-1: #57e33e;
+      --neon-color-2: #00ffaa;
+      --neon-glow-1: 12px;
+      --neon-blur: 0px;
+      --neon-height: 18px;
+      --neon-width: 100%;
+      --neon-arc: 20px;
+      --anim-speed: 3s;
+    }
+
+    .lt-wrapper {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    }
+
+    .lt-wrapper.lt-hidden {
+      transform: translateY(220px);
+      opacity: 0;
+    }
+
+    .live-badge {
+      background-color: #ff3b30;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 24px;
+      padding: 6px 32px;
+      border-radius: 0 16px 16px 0;
+      width: fit-content;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 0 15px rgba(255, 59, 48, 0.7);
+      z-index: 3;
+      transition: all 0.3s ease;
+    }
+
+    .neon-bar-container {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: -2px;
+      z-index: 2;
+    }
+
+    .neon-bar {
+      width: var(--neon-width);
+      height: var(--neon-height);
+      background: linear-gradient(90deg, var(--neon-color-1), var(--neon-color-2), var(--neon-color-1));
+      background-size: 200% 200%;
+      border-radius: var(--neon-arc) var(--neon-arc) 0 0 / 100% 100% 0 0;
+      transition: filter 0.2s ease, background 0.3s ease, height 0.1s ease, width 0.1s ease, border-radius 0.1s ease;
+    }
+
+    .anim-pulse { animation: neonPulse var(--anim-speed) ease-in-out infinite; }
+    .anim-flow { animation: neonFlow var(--anim-speed) linear infinite, neonPulse calc(var(--anim-speed) * 1.5) ease-in-out infinite; }
+    .anim-scan {
+      background: linear-gradient(90deg, var(--neon-color-1) 0%, var(--neon-color-2) 50%, var(--neon-color-1) 100%);
+      background-size: 50% 100%;
+      animation: neonScan var(--anim-speed) linear infinite;
+    }
+    .anim-static { animation: none; filter: blur(var(--neon-blur)) drop-shadow(0 0 var(--neon-glow-1) var(--neon-color-1)); }
+
+    .main-banner {
+      background-color: #0b1a20;
+      color: #ffffff;
+      padding: 16px 50px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      min-height: 80px;
+      transition: background-color 0.3s ease;
+    }
+
+    .headline-text {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      line-height: 1.2;
+      text-shadow: 1px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+      position: relative;
+      margin-top: 2px;
+    }
+
+    .gray-accent {
+      width: 520px;
+      height: 16px;
+      background-color: #cfd8dc;
+      border-radius: 0 0 20px 0;
+    }
+
+    .clock-badge {
+      background-color: #ff3b30;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 26px;
+      padding: 5px 28px;
+      border-radius: 14px 0 0 14px;
+      box-shadow: 0 0 12px rgba(255, 59, 48, 0.6);
+      position: absolute;
+      right: 0;
+      top: 0;
+      font-variant-numeric: tabular-nums;
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="lt-container" class="lt-wrapper">
+    <div id="lt-live-badge" class="live-badge">EN VIVO</div>
+    <div class="neon-bar-container">
+      <div id="lt-neon-bar" class="neon-bar anim-flow"></div>
+    </div>
+    <div id="lt-main-banner" class="main-banner">
+      <h1 id="lt-headline" class="headline-text">La comunidad de Cravo Totumo comienza a ver avances</h1>
+    </div>
+    <div class="bottom-row">
+      <div class="gray-accent"></div>
+      <div id="lt-clock" class="clock-badge">00:00:00</div>
+    </div>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('lt-clock').textContent = `${h}:${m}:${s}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    const channel = new BroadcastChannel('obs_lower_third_channel');
+
+    function applySettings(data) {
+      if (!data) return;
+
+      const ltContainer = document.getElementById('lt-container');
+      const ltHeadline = document.getElementById('lt-headline');
+      const ltLiveBadge = document.getElementById('lt-live-badge');
+      const ltNeonBar = document.getElementById('lt-neon-bar');
+      const ltMainBanner = document.getElementById('lt-main-banner');
+      const ltClock = document.getElementById('lt-clock');
+      const root = document.documentElement;
+
+      if (data.isVisible) {
+        ltContainer.classList.remove('lt-hidden');
+      } else {
+        ltContainer.classList.add('lt-hidden');
+      }
+
+      if (data.headlineText) ltHeadline.textContent = data.headlineText;
+
+      if (data.neonHeight) root.style.setProperty('--neon-height', data.neonHeight + 'px');
+      if (data.neonWidth) root.style.setProperty('--neon-width', data.neonWidth + '%');
+      if (data.neonArc) root.style.setProperty('--neon-arc', data.neonArc + 'px');
+      if (data.neonGlow) root.style.setProperty('--neon-glow-1', data.neonGlow + 'px');
+      if (data.neonBlur) root.style.setProperty('--neon-blur', data.neonBlur + 'px');
+      if (data.neon1) root.style.setProperty('--neon-color-1', data.neon1);
+      if (data.neon2) root.style.setProperty('--neon-color-2', data.neon2);
+      if (data.neonAnim) ltNeonBar.className = `neon-bar ${data.neonAnim}`;
+
+      if (data.fontHeadline) ltHeadline.style.fontFamily = data.fontHeadline;
+      if (data.weightHeadline) ltHeadline.style.fontWeight = data.weightHeadline;
+      if (data.sizeHeadline) ltHeadline.style.fontSize = data.sizeHeadline + 'px';
+
+      if (data.fontBadge) ltLiveBadge.style.fontFamily = data.fontBadge;
+      if (data.sizeBadge) ltLiveBadge.style.fontSize = data.sizeBadge + 'px';
+
+      if (data.sizeClock) ltClock.style.fontSize = data.sizeClock + 'px';
+
+      if (data.colorBadge) {
+        ltLiveBadge.style.backgroundColor = data.colorBadge;
+        ltClock.style.backgroundColor = data.colorBadge;
+      }
+
+      if (data.colorBg) {
+        ltMainBanner.style.backgroundColor = data.colorBg;
+      }
+    }
+
+    channel.onmessage = (event) => applySettings(event.data);
+
+    window.addEventListener('storage', () => {
+      const saved = localStorage.getItem('obs_lt_settings');
+      if (saved) applySettings(JSON.parse(saved));
+    });
+
+    const initialSaved = localStorage.getItem('obs_lt_settings');
+    if (initialSaved) applySettings(JSON.parse(initialSaved));
+  </script>
+</body>
+</html>
